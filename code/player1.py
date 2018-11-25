@@ -33,7 +33,6 @@ class Player(object):
         否则返回你用来抢庄的牌，
         例如 '!3'。
         '''
-        self.__update_other_players_cards(current_turn_out_cards)
         self.cards[current_card[0]].append(current_card)
         # if self.snatch == current_card.value and self.have_main == False:
         if self.have_main == False:
@@ -44,8 +43,8 @@ class Player(object):
                     if len(self.cards[suit]) > 10:
                         return suit + self.main_value
             # return current_card
-        else:
-            return ''
+        # else:
+        return ''
 
     def add_left_card(self, left_cards):
         '''
@@ -86,6 +85,7 @@ class Player(object):
         @return : Nothing
         '''
         self.main_suit = suit
+        self.have_main = True
         # return True
 
     def set_role(self, role):
@@ -126,15 +126,17 @@ class Player(object):
         例如
         >>> player.play_out_cards(6, ['#2', '#K', '#10'])
         '''
+        self.__update_other_players_cards(current_turn_out_cards)
+        cards = []
         #TODO: get cards should be played out
         # play out cards randomly
         for suit in self.cards.keys():
             if len(self.cards[suit]) == 0:
                 continue
-            card_index = random.randint(0, len(self.cards[suit]))
-            cards = list(self.cards[card_index])
+            card_index = random.randint(0, len(self.cards[suit]) - 1)
+            cards.append(self.cards[suit][card_index])
             for card in cards:
-                self.cards.remove(card)
+                self.cards[suit].remove(card)
             return cards
 
     def show_cards(self):
@@ -155,9 +157,9 @@ class Player(object):
         left_cards = []
         for i in range(number):
             # TODO: which card should be deleted
-            # card = None
-            # self.cards[card[0]].remove(card)
-            # left_cards.append(card)
+            card = None
+            self.cards[card[0]].remove(card)
+            left_cards.append(card)
         return left_cards
 
     def __init_all_cards(self):
@@ -175,7 +177,7 @@ class Player(object):
 
     def __update_other_players_cards(self, current_turn_out_cards):
         '''
-        记录更新左手边、对面、右手边玩家的出过的牌
+        记录更新左手边、对面、右手边玩家出过的牌
         @return :: nothing
         '''
         for people in range(len(current_turn_out_cards) - 1, 0, -1):
@@ -190,3 +192,23 @@ class Player(object):
                 else:
                     # the people of your right hand size
                     self.enemy_right_cards_info[suit].append(card)
+
+
+if __name__ == "__main__":
+    test_player1 = Player()
+    test_player1.set_main_value('2')
+    suit = '!'
+    for value in ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'J', 'Q', 'K']:
+        card = suit + value
+        return_card = test_player1.add_card_and_is_snatch(card)
+        if return_card != '':
+            test_player1.set_main_color(return_card[0])
+            print(return_card)
+    print("Before play one turn: ", end='')
+    print(test_player1.show_cards())
+    
+    print("play out: ", end='')
+    print(test_player1.play_out_cards(1, []))
+
+    print("Before play one turn: ", end='')
+    print(test_player1.show_cards())
