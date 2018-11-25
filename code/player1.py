@@ -46,7 +46,7 @@ class Player(object):
         # else:
         return ''
 
-    def add_left_card(self, left_cards):
+    def add_left_cards(self, left_cards):
         '''
         只有压底牌的庄家(house_master)会被调用这个函数。
         会在发牌结束后调用。
@@ -65,6 +65,8 @@ class Player(object):
         注意，你必须返回与left_cards长度一样的列表。
         列表中的每个元素代表你压下的牌。请确保你压下的牌中，每张牌都是你拥有的。
         '''
+		# TODO: 有bug， TypeError: unsupported operand type(s) for +=: 'dict' and 'list'
+		# 说明self.cards是dict咯，不太对
         self.cards += left_cards
         return self.__delete_cards(len(left_cards))
 

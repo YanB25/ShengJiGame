@@ -5,7 +5,7 @@ import random
 # import player1.Player as PlayerTwo
 # import player1.Player as PlayerThree
 # import player1.Player as PlayerFour
-import player1.Player as Player
+from player1 import Player
 
 # pl1 = PlayerOne
 # pl2 = PlayerTwo
@@ -51,7 +51,8 @@ class Judger():
             player.set_main_value(self.__main_value)
 
         self.hand_out_cards() #发牌
-        self.play_out() # 打牌
+        #TODO:
+        # self.play_out() # 打牌
     
     def hand_out_cards(self):
         '''
@@ -240,4 +241,13 @@ class Judger():
         ls = list('A23456789XJQK')
         return ls.index(card[1]) + 1
     def exit(self):
+        self.show_all()
         exit(1)
+    def show_all(self):
+        for i in range(4):
+            print(self.__tracking[i])
+
+
+if __name__ == "__main__":
+    judger = Judger(player_ls)
+    judger.run()
