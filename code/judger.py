@@ -5,7 +5,7 @@ import random
 # import player1.Player as PlayerTwo
 # import player1.Player as PlayerThree
 # import player1.Player as PlayerFour
-import player.Player as Player
+import player1.Player as Player
 
 # pl1 = PlayerOne
 # pl2 = PlayerTwo
