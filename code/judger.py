@@ -102,20 +102,40 @@ class Judger():
             i = (i + 1) % 4
         # 有人做庄吗？
         if self.house_master_id is None:
-            print('MSG 01: no one choose to be house. again.')
-            self.startPrepare()
-            self.startGame()
-            return
+            assert(self.__main_card is None)
+            print('MSG 01: no one choose to be house.')
+            self.player_ls[0].set_role('house_master')
+            self.house_master_id = 0
+            self.player_ls[1].set_role('player_right')
+            self.player_right_id = 1
+            self.player_ls[2].set_role('house_peer')
+            self.house_peer_id = 2
+            self.player_ls[3].set_role('house_left')
+            self.player_left_id = 3
+
+            main_suit = self.__cards[-3][0]
+            self.__main_suit = main_suit
+            self.__main_card = '' + self.__main_suit + self.__main_value
+            for player in self.player_ls:
+                player.set_main_color(self.__main_suit)
         if self.__main_suit is None:
             print('MSG 02: no one put the main suit. again.')
-            self.startPrepare()
-            self.startGame()
-            return
-            
+            self.__main_card = self.__cards[-3]
+            self.__main_suit = self.__main_card[0]
+            for player in self.player_ls:
+                player.set_main_color(self.__main_suit)
+        print('main card {}, main suit {}, main value {}'.format(
+            self.__main_card,
+            self.__main_suit,
+            self.__main_value
+        ))
         
         # 下面压底牌
         deskcards = self.__cards[-6:]
+        print('deskcards {}'.format(deskcards))
+
         self.__deskcards = self.player_ls[self.house_master_id].add_left_cards(deskcards)
+        print('return deskcards {}'.format(self.__deskcards))
         assert(len(self.__deskcards) == len(deskcards))
 
         # 记录一下庄主有的牌
