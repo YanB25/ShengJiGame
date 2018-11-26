@@ -14,10 +14,11 @@ class Player(object):
         self.role = None
         self.have_main = False 
         self.snatch = None # ???
-        self.all_cards = {}
-        self.partner_cards_info = {}
-        self.enemy_left_cards_info = {}
-        self.enemy_right_cards_info = {}
+        self.my_turn = None # 当前一轮中出牌的序号
+        self.all_cards = {'!':[], '&':[], '%':[], '#':[], '?':[]}
+        self.partner_cards_info = {'!':[], '&':[], '%':[], '#':[], '?':[]}
+        self.enemy_left_cards_info = {'!':[], '&':[], '%':[], '#':[], '?':[]}
+        self.enemy_right_cards_info = {'!':[], '&':[], '%':[], '#':[], '?':[]}
 
     def add_card_and_is_snatch(self, current_card):
         '''
@@ -37,17 +38,17 @@ class Player(object):
             self.cards['?'].append(current_card)
         else:
             self.cards[current_card[0]].append(current_card)
-        print(self.cards, end='\n\n')
+        if self.have_main == False and current_card[1] == self.main_value:
+            return current_card
+        # print(self.cards, end='\n\n')
         # if self.snatch == current_card.value and self.have_main == False:
-        if self.have_main == False:
-            # TODO: judge snatch or not
-            for suit in self.cards.keys():
-                if suit + self.main_value in self.cards['?']:
-                    # I have main value card
-                    if len(self.cards[suit]) > 10:
-                        print(suit + self.main_value)
-                        print(self.cards)
-                        return suit + self.main_value
+        # if self.have_main == False:
+        #     # TODO: judge snatch or not
+        #     for suit in self.cards.keys():
+        #         if suit + self.main_value in self.cards['?']:
+        #             # I have main value card
+        #             if len(self.cards[suit]) > 4:
+        #                 return suit + self.main_value
             # return current_card
         # else:
         return ''
@@ -140,9 +141,10 @@ class Player(object):
         # play out cards randomly
         current_suit = '!'
         card_index = 0
-        if len(current_turn_out_cards) > 0:
+        self.my_turn = len(current_turn_out_cards) + 1
+        if self.my_turn > 1:
             current_suit = current_turn_out_cards[0][0]
-        if len(self.cards[current_suit]) != 0:
+        if len(self.cards[current_suit]) > 0:
             card_index = random.randint(0, len(self.cards[current_suit]) - 1)
         else:
             for suit in self.cards.keys():
@@ -203,18 +205,19 @@ class Player(object):
         记录更新左手边、对面、右手边玩家出过的牌
         @return :: nothing
         '''
+        print(current_turn_out_cards)
         for people in range(len(current_turn_out_cards) - 1, 0, -1):
-            for card in current_turn_out_cards[people]:
-                suit = card[0]
-                if people == len(current_turn_out_cards) - 1:
-                    # the people of your left hand size
-                    self.enemy_left_cards_info[suit].append(card)
-                elif people == len(current_turn_out_cards) - 2:
-                    # the people of your partner
-                    self.partner_cards_info[suit].append(card)
-                else:
-                    # the people of your right hand size
-                    self.enemy_right_cards_info[suit].append(card)
+            card = current_turn_out_cards[people]
+            suit = card[0]
+            if people == len(current_turn_out_cards) - 1:
+                # the people of your left hand size
+                self.enemy_left_cards_info[suit].append(card)
+            elif people == len(current_turn_out_cards) - 2:
+                # the people of your partner
+                self.partner_cards_info[suit].append(card)
+            else:
+                # the people of your right hand size
+                self.enemy_right_cards_info[suit].append(card)
 
 
 if __name__ == "__main__":
@@ -235,7 +238,7 @@ if __name__ == "__main__":
 
     print("Before play one turn: ", end='')
     print(test_player1.show_cards())
-    
+
     test_player1.clear()
     print(test_player1.show_cards())
     
