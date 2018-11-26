@@ -57,7 +57,7 @@ class Judger():
 
         self.hand_out_cards() #发牌
         #TODO:
-        # self.play_out() # 打牌
+        self.play_out() # 打牌
     
     def hand_out_cards(self):
         '''
