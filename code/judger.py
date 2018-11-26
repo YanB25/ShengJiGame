@@ -162,10 +162,10 @@ class Judger():
                     max_idx = i
             # 结算分
             if max_idx == self.player_left_id or max_idx == self.player_right_id:
-                print('{} win, get point {}[{}]'.format(max_id, points, self.__points))
+                print('{} win, get point {}[{}]'.format(max_idx, points, self.__points))
                 self.__points += points
             else:
-                print('{} win, point not change(this round {})[{}]'.format(max_id, points, self.__points))
+                print('{} win, point not change(this round {})[{}]'.format(max_idx, points, self.__points))
                 
     def __is_main(self, card):
         return card[0] == self.__main_suit or card[0] == '?' or card[1] == self.__main_value
@@ -208,13 +208,6 @@ class Judger():
         它是个长度为4的列表，对应4个玩家。每个元素是一个字典
         字典的格式如`obj`所示。
         '''
-        obj = {
-            '#': [], # 方块
-            '%': [], # 梅花
-            '&': [], # 红桃
-            '!': [], # 黑桃
-            '?': [] # 主牌
-        }
         self.__tracking = [
             {
                 '#': [],
