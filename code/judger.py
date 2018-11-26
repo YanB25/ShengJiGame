@@ -57,7 +57,7 @@ class Judger():
 
         self.hand_out_cards() #发牌
         #TODO:
-        self.play_out() # 打牌
+        # self.play_out() # 打牌
     
     def hand_out_cards(self):
         '''
@@ -156,6 +156,16 @@ class Judger():
             else:
                 # 检查通过
                 self.__tracking[hi][suit].remove(card)
+
+        # 把主牌移到主牌的位置
+        for i in range(4):
+            self.__tracking[i]['?'] += [i for i in self.__tracking[i][self.__main_suit]]
+            self.__tracking[i][self.__main_suit] = []
+            for suit in ['#', '%', '&', '!']:
+                mc = '' + suit + self.__main_value
+                if mc in self.__tracking[i][suit]:
+                    self.__tracking[i][suit].remove(mc)
+                    self.__tracking[i]['?'].append(mc)
         print('after house return deskcards')
         self.show_all()
 
@@ -170,7 +180,7 @@ class Judger():
             points = 0
             for who in range(4):
                 i = (start_index + who) % 4
-                ret = self.player_ls[i].player_out_cards(round, has_send)
+                ret = self.player_ls[i].play_out_cards(round, has_send)
 
                 if max_card is None: 
                     max_card = ret
