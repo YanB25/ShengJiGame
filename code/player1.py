@@ -65,12 +65,13 @@ class Player(object):
         注意，你必须返回与left_cards长度一样的列表。
         列表中的每个元素代表你压下的牌。请确保你压下的牌中，每张牌都是你拥有的。
         '''
-		# TODO: 有bug， TypeError: unsupported operand type(s) for +=: 'dict' and 'list'
-		# 说明self.cards是dict咯，不太对
-        self.cards += left_cards
+        for card in left_cards:
+            suit = card[0]
+            self.cards[suit].append(card)
         return self.__delete_cards(len(left_cards))
 
     def finish_one_round(self, current_turn_out_cards):
+        # TODO: do something
         pass
 
     def set_main_value(self, main_value):
@@ -129,17 +130,23 @@ class Player(object):
         >>> player.play_out_cards(6, ['#2', '#K', '#10'])
         '''
         self.__update_other_players_cards(current_turn_out_cards)
-        cards = []
         #TODO: get cards should be played out
         # play out cards randomly
-        for suit in self.cards.keys():
-            if len(self.cards[suit]) == 0:
-                continue
-            card_index = random.randint(0, len(self.cards[suit]) - 1)
-            cards.append(self.cards[suit][card_index])
-            for card in cards:
-                self.cards[suit].remove(card)
-            return cards
+        current_suit = '!'
+        card_index = 0
+        if len(current_turn_out_cards) > 0:
+            current_suit = current_turn_out_cards[0][0]
+        if len(self.cards[current_suit]) != 0:
+            card_index = random.randint(0, len(self.cards[current_suit]) - 1)
+        else:
+            for suit in self.cards.keys():
+                if len(self.cards[suit]) == 0:
+                    continue
+                card_index = random.randint(0, len(self.cards[suit]) - 1)
+                current_suit = suit
+        card = self.cards[current_suit][card_index]
+        self.cards[current_suit].remove(card)
+        return card
 
     def show_cards(self):
         '''
@@ -159,7 +166,12 @@ class Player(object):
         left_cards = []
         for i in range(number):
             # TODO: which card should be deleted
+            # randomly
             card = None
+            for suit in ['!', '&', '%', '#']:
+                if len(self.cards[suit]) > 0:
+                    card_index = random.randint(0, len(self.cards[suit]) - 1)
+                    card = self.cards[suit][card_index]
             self.cards[card[0]].remove(card)
             left_cards.append(card)
         return left_cards
