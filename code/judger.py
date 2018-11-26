@@ -170,7 +170,7 @@ class Judger():
             points = 0
             for who in range(4):
                 i = (start_index + who) % 4
-                ret = self.player_ls[i].player_out_cards(round, has_send)
+                ret = self.player_ls[i].play_out_cards(round, has_send)
 
                 if max_card is None: 
                     max_card = ret
