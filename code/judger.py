@@ -57,7 +57,7 @@ class Judger():
 
         self.hand_out_cards() #发牌
         #TODO:
-        # self.play_out() # 打牌
+        self.play_out() # 打牌
     
     def hand_out_cards(self):
         '''
@@ -156,6 +156,8 @@ class Judger():
             else:
                 # 检查通过
                 self.__tracking[hi][suit].remove(card)
+        print('after house return deskcards')
+        self.show_all()
 
     def play_out(self):
         start_index = self.house_master_id
