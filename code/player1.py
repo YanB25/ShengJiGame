@@ -40,17 +40,6 @@ class Player(object):
             self.cards[current_card[0]].append(current_card)
         if self.have_main == False and current_card[1] == self.main_value:
             return current_card
-        # print(self.cards, end='\n\n')
-        # if self.snatch == current_card.value and self.have_main == False:
-        # if self.have_main == False:
-        #     # TODO: judge snatch or not
-        #     for suit in self.cards.keys():
-        #         if suit + self.main_value in self.cards['?']:
-        #             # I have main value card
-        #             if len(self.cards[suit]) > 4:
-        #                 return suit + self.main_value
-            # return current_card
-        # else:
         return ''
 
     def add_left_cards(self, left_cards):
@@ -79,7 +68,20 @@ class Player(object):
 
     def finish_one_round(self, current_turn_out_cards):
         # TODO: do something
-        pass
+        for people in range(self.my_turn + 1, len(current_turn_out_cards)):
+            card = current_turn_out_cards[people]
+            suit = card[0]
+            if card[1] == self.main_value:
+                suit = '?'
+            if people == self.my_turn + 1:
+                # the people of your right hand size
+                self.enemy_right_cards_info[suit].append(card)
+            elif people == self.my_turn + 2:
+                # the people of your partner
+                self.partner_cards_info[suit].append(card)
+            elif people == self.my_turn + 3:
+                # the people of your left hand size
+                self.enemy_left_cards_info[suit].append(card)
 
     def set_main_value(self, main_value):
         self.main_value = main_value
@@ -143,15 +145,19 @@ class Player(object):
         card_index = 0
         self.my_turn = len(current_turn_out_cards) + 1
         if self.my_turn > 1:
-            current_suit = current_turn_out_cards[0][0]
+            if current_turn_out_cards[0][1] == self.main_value:
+                # 如果当前轮打的是主牌
+                current_suit = '?'
+            else:
+                current_suit = current_turn_out_cards[0][0] 
         if len(self.cards[current_suit]) > 0:
             card_index = random.randint(0, len(self.cards[current_suit]) - 1)
         else:
             for suit in self.cards.keys():
                 if len(self.cards[suit]) == 0:
                     continue
-                card_index = random.randint(0, len(self.cards[suit]) - 1)
                 current_suit = suit
+            card_index = random.randint(0, len(self.cards[current_suit]) - 1)
         card = self.cards[current_suit][card_index]
         self.cards[current_suit].remove(card)
         return card
@@ -205,10 +211,11 @@ class Player(object):
         记录更新左手边、对面、右手边玩家出过的牌
         @return :: nothing
         '''
-        print(current_turn_out_cards)
         for people in range(len(current_turn_out_cards) - 1, 0, -1):
             card = current_turn_out_cards[people]
             suit = card[0]
+            if card[1] == self.main_value:
+                suit = '?'
             if people == len(current_turn_out_cards) - 1:
                 # the people of your left hand size
                 self.enemy_left_cards_info[suit].append(card)
