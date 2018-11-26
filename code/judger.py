@@ -12,7 +12,11 @@ from player1 import Player
 # pl3 = PlayerThree
 # pl4 = PlayerFour
 # player_ls = [pl1, pl2, pl3, pl4]
-player_ls = [Player() for i in range(4)]
+pl1 = Player()
+pl2 = Player()
+pl3 = Player()
+pl4 = Player()
+player_ls = [pl1, pl2, pl3, pl4]
 class Judger():
     def __init__(self, player_ls):
         '''
@@ -122,6 +126,7 @@ class Judger():
             if card not in self.__tracking[hi][suit]:
                 # 庄主有这张牌吗？
                 print('ERROR 03: house return {}({}) as deskcard but he do not have it.'.format(self.__deskcards, card))
+                self.exit()
             else:
                 # 检查通过
                 self.__tracking[hi][suit].remove(card)
@@ -211,7 +216,13 @@ class Judger():
             '?': [] # 主牌
         }
         self.__tracking = [
-            obj for i in range(4)
+            {
+                '#': [],
+                '%': [],
+                '&': [],
+                '!': [],
+                '?': []
+            } for i in range(4)
         ]
     def __init_cards(self):
         '''
