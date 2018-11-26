@@ -33,14 +33,20 @@ class Player(object):
         否则返回你用来抢庄的牌，
         例如 '!3'。
         '''
-        self.cards[current_card[0]].append(current_card)
+        if current_card[1] == self.main_value:
+            self.cards['?'].append(current_card)
+        else:
+            self.cards[current_card[0]].append(current_card)
+        print(self.cards, end='\n\n')
         # if self.snatch == current_card.value and self.have_main == False:
         if self.have_main == False:
             # TODO: judge snatch or not
             for suit in self.cards.keys():
-                if suit + self.main_value in self.cards[suit]:
+                if suit + self.main_value in self.cards['?']:
                     # I have main value card
                     if len(self.cards[suit]) > 10:
+                        print(suit + self.main_value)
+                        print(self.cards)
                         return suit + self.main_value
             # return current_card
         # else:
@@ -158,6 +164,9 @@ class Player(object):
             cards += self.cards[suit]
         return cards
 
+    def clear(self):
+        self.__init__()
+
     def __delete_cards(self, number):
         '''
         庄家决定从手牌中放回 number 张牌作为底牌
@@ -226,3 +235,7 @@ if __name__ == "__main__":
 
     print("Before play one turn: ", end='')
     print(test_player1.show_cards())
+    
+    test_player1.clear()
+    print(test_player1.show_cards())
+    
