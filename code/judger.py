@@ -52,6 +52,7 @@ class Judger():
     def startGame(self):
         # 公布这一轮打几
         for player in self.player_ls:
+            player.clear()
             player.set_main_value(self.__main_value)
 
         self.hand_out_cards() #发牌
@@ -72,6 +73,7 @@ class Judger():
             suit = card[0]
             ret = self.player_ls[i].add_card_and_is_snatch(card)
             self.__tracking[i][suit].append(card) # 记录玩家获得的牌
+            self.show_all() 
             if ret != '':
                 if ret == '?G' or ret == '?g' or ret[1] != self.__main_value:
                     print("ERROR 02: {} use {} to be house, which is not allowed".format(i, ret))
@@ -83,6 +85,7 @@ class Judger():
                 # 检验通过
                 self.__main_card = ret
                 self.__main_suit = ret[0]
+                print('house card is {}'.format(self.__main_card))
 
                 self.player_ls[i].set_role('house_master')
                 self.house_master_id = i
@@ -119,6 +122,9 @@ class Judger():
         hi = self.house_master_id
         for card in deskcards:
             self.__tracking[hi][card[0]].append(card)
+
+        print('send deskcard to house master.')
+        self.show_all()
 
         # 检查一下庄主的返回是否正确
         for card in self.__deskcards:
@@ -250,6 +256,13 @@ class Judger():
     def show_all(self):
         for i in range(4):
             print(self.__tracking[i])
+        print('house is {}'.format(self.house_master_id))
+        # print('main card {}, main value {}, main suit {}'.format(
+        #     self.__main_card,
+        #     self.__main_value,
+        #     self.__main_suit
+        # ))
+        print()
 
 
 if __name__ == "__main__":
