@@ -29,7 +29,7 @@ class Judger():
         self.__main_value = '2' # 先打2
         self.__main_suit = None
         self.__deskcards = None # 底牌
-        self.__points = 0 # 分
+        self.__points = 0 # 这一轮拿到的分
 
         # 下面四个是四个角色在 self.player_ls 里的索引
         self.house_master_id = None
@@ -40,7 +40,7 @@ class Judger():
         self.player_ls = player_ls
 
     def run(self):
-        self.startPrepare()
+        self.startPrepare() # Judger类的内部初始化工作
         self.startGame()
 
     def startPrepare(self):
@@ -56,14 +56,11 @@ class Judger():
             player.set_main_value(self.__main_value)
 
         self.hand_out_cards() #发牌
-        #TODO:
         self.play_out() # 打牌
     
     def hand_out_cards(self):
         '''
         发牌
-        @return boolean, 表示发牌阶段是否成功
-        不成功的因素例如：(a)没有人抢庄, 
         '''
         # 决定先发谁的牌
         first_player = Judger.cards2int(self.__cards[0]) % 4
