@@ -173,7 +173,7 @@ class Judger():
         start_index = self.house_master_id
         for round in range(12):
             has_send = []
-            max_player = 0
+            record_send = ['--' for i in range(4)]
             max_card = None
             max_idx = None
             first_card = None
@@ -181,6 +181,9 @@ class Judger():
             for who in range(4):
                 i = (start_index + who) % 4
                 ret = self.player_ls[i].play_out_cards(round, has_send)
+                # 下面检测 ret是否合法
+                self.__check_follow_suit(first_card, i, ret)
+                self.__check_exist_and_remove(i, ret)
 
                 if max_card is None: 
                     max_card = ret
@@ -189,23 +192,31 @@ class Judger():
                     first_card = ret
 
                 has_send.append(ret)
+                record_send[i] = ret
                 if ret[1] == '5':
                     points += 5
                 elif ret[1] == 'X' or ret[1] == 'K':
                     points += 10
 
                 if self.__card_lt(first_card, max_card, ret):
-                    print('DEBUG: cards {} > max card {}'.format(ret, max_card))
+                    # print('DEBUG: cards {} > max card {}'.format(ret, max_card))
                     max_card = ret
                     max_idx = i
+                print(record_send, max_card)
+            # 通知所有玩家所有的牌
+            for player in self.player_ls:
+                player.finish_one_round(has_send)
             # 结算分
             if max_idx == self.player_left_id or max_idx == self.player_right_id:
-                print('{} win, get point {}[{}]'.format(max_idx, points, self.__points))
                 self.__points += points
+                print('({}) win, get point {}[{}]'.format(max_idx, points, self.__points))
             else:
-                print('{} win, point not change(this round {})[{}]'.format(max_idx, points, self.__points))
+                print('({}) win, point not change(this round {})[{}]'.format(max_idx, points, self.__points))
+            # 更新下一轮的出牌者
+            start_index = max_idx
                 
     def __is_main(self, card):
+        assert(len(card) == 2)
         return card[0] == self.__main_suit or card[0] == '?' or card[1] == self.__main_value
     def __card_lt(self, first_card, left_card, right_card):
         '''
@@ -222,7 +233,7 @@ class Judger():
         if not left_main and not right_main:
             # 都不是主牌
             left_follow_suit = left_card[0] == first_card[0]
-            right_follow_suit = right_card[0] == first_card[1]
+            right_follow_suit = right_card[0] == first_card[0]
             if left_follow_suit and not right_follow_suit:
                 return False
             elif not left_follow_suit and right_follow_suit:
@@ -234,6 +245,15 @@ class Judger():
                 return orders.index(left_card[1]) < orders.index(right_card[1])
         else:
             # 都是主牌
+            if (left_card[1] == right_card[1] == self.__main_value):
+                left_pivot_value = left_card[0] == self.__main_suit
+                right_pivot_value = right_card[0] == self.__main_suit
+                if (left_pivot_value):
+                    return False
+                if (right_pivot_value):
+                    return True
+                # 两个都是主牌面，但是都不是主色的主牌
+                return False
             m_orders = orders[:]
             m_orders.remove(self.__main_value)
             m_orders.insert(len(m_orders)-2, self.__main_value)
@@ -295,6 +315,31 @@ class Judger():
         #     self.__main_suit
         # ))
         print()
+    def __check_exist(self, player_id, card):
+        '''
+        检查玩家是否有这张牌
+        '''
+        suit = '?' if self.__is_main(card) else card[0]
+        if card not in self.__tracking[player_id][suit]:
+            print('ERROR 05: player {} not have cards {}'.format(player_id, card))
+            self.exit()
+    def __check_exist_and_remove(self, player_id, card):
+        self.__check_exist(player_id, card)
+        suit = '?' if self.__is_main(card) else card[0]
+        self.__tracking[player_id][suit].remove(card)
+    def __check_follow_suit(self, first_card, player_id, card):
+        '''
+        检查 player_id出的牌card，是否符合first_card的花色
+        '''
+        if first_card is None:
+            return
+        first_suit = '?' if self.__is_main(first_card) else first_card[0]
+        card_suit = '?' if self.__is_main(card) else card[0]
+        has_suit = self.__tracking[player_id][first_suit] != []
+        if has_suit and card_suit != first_suit:
+            print('ERROR 06. player {} send card {}, not follow card {}'.format(player_id, card, first_card))
+            print('ERROR 06. first_suit {}, card_suit{}'.format(first_suit, card_suit))
+            self.exit()
 
 
 if __name__ == "__main__":
