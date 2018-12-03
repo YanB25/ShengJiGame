@@ -2,22 +2,23 @@ import random
 
 class Player(object):
     """docstring for Player"""
-    def __init__(self):
+    def __init__(self, role):
         '''
         构造函数不会接受任何参数
         会用如下方法构造你的对象
         >>> player1 = Player()
         '''
-        self.cards = {'!':[], '&':[], '%':[], '#':[], '?':[]}
+        self.cards = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
         self.main_value = None
         self.main_suit = None
         self.role = None
         self.have_main = False 
         self.snatch = None # ???
-        self.all_cards = {'!':[], '&':[], '%':[], '#':[], '?':[]}
-        self.partner_cards_info = {'!':[], '&':[], '%':[], '#':[], '?':[]}
-        self.enemy_left_cards_info = {'!':[], '&':[], '%':[], '#':[], '?':[]}
-        self.enemy_right_cards_info = {'!':[], '&':[], '%':[], '#':[], '?':[]}
+        self.all_cards = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+        self.partner_cards_info = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+        self.enemy_left_cards_info = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+        self.enemy_right_cards_info = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+        self.set_role(role)
 
     def add_card_and_is_snatch(self, current_card):
         '''
@@ -35,7 +36,7 @@ class Player(object):
         '''
         if current_card[1] == self.main_value:
             self.cards['?'].append(current_card)
-        elif self.have_main and current_card[0] == self.main_suit:
+        elif self.have_main and current_card[0] == self.main_suit or current_card[0] == 'j' or current_card[0] == 'J':
             self.cards['?'].append(current_card)
         else:
             self.cards[current_card[0]].append(current_card)
@@ -64,12 +65,15 @@ class Player(object):
         '''
         for card in left_cards:
             suit = card[0]
+            if card[1] == self.main_value or suit == 'j' or suit == 'J':
+                suit = '?'
             self.cards[suit].append(card)
         return self.__delete_cards(len(left_cards))
 
     def finish_one_round(self, current_turn_out_cards, my_turn_order):
-        # TODO: do something
         pass
+    # def finish_one_round(self, current_turn_out_cards, my_turn_order):
+        # TODO: do something
         # for people in range(my_turn_order + 1, len(current_turn_out_cards)):
         #     card = current_turn_out_cards[people]
         #     suit = card[0]
@@ -143,10 +147,10 @@ class Player(object):
         self.__update_other_players_cards(current_turn_out_cards)
         #TODO: get cards should be played out
         # play out cards randomly
-        current_suit = '!'
+        current_suit = 'S'
         card_index = 0
         if len(current_turn_out_cards) > 0:
-            if current_turn_out_cards[0][1] == self.main_value or current_turn_out_cards[0][0] == self.main_suit:
+            if current_turn_out_cards[0][1] == self.main_value or current_turn_out_cards[0][0] == self.main_suit or current_turn_out_cards[0][0] == 'j' or current_turn_out_cards[0][0] == 'J':
                 # 如果当前轮打的是主牌
                 current_suit = '?'
             else:
@@ -173,6 +177,18 @@ class Player(object):
             cards += self.cards[suit]
         return cards
 
+    def player_init(self):
+        self.cards = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+        self.main_value = None
+        self.main_suit = None
+        self.role = None
+        self.have_main = False 
+        self.snatch = None # ???
+        self.all_cards = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+        self.partner_cards_info = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+        self.enemy_left_cards_info = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+        self.enemy_right_cards_info = {'S':[], 'H':[], 'C':[], 'D':[], '?':[]}
+
     def clear(self):
         self.__init__()
 
@@ -186,7 +202,7 @@ class Player(object):
             # TODO: which card should be deleted
             # randomly
             card = None
-            for suit in ['!', '&', '%', '#']:
+            for suit in ['S', 'H', 'C', 'D']:
                 if len(self.cards[suit]) > 0:
                     card_index = random.randint(0, len(self.cards[suit]) - 1)
                     card = self.cards[suit][card_index]
@@ -199,13 +215,13 @@ class Player(object):
         初始化所有的牌 if need
         @return :: Nothing
         '''
-        suits = ['!', '&', '%', '#']
+        suits = ['S', 'H', 'C', 'D']
         values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'J', 'Q', 'K']
         for suit in suits:
             for value in values:
                 all_cards.append(suit + value)
-        all_cards.append("?G")
-        all_cards.append("?g")
+        all_cards.append("JK")
+        all_cards.append("jk")
 
     def __update_other_players_cards(self, current_turn_out_cards):
         '''
@@ -215,7 +231,7 @@ class Player(object):
         for people in range(len(current_turn_out_cards) - 1, 0, -1):
             card = current_turn_out_cards[people]
             suit = card[0]
-            if card[1] == self.main_value:
+            if card[1] == self.main_value or suit == 'J' or suit == 'j':
                 suit = '?'
             if people == len(current_turn_out_cards) - 1:
                 # the people of your left hand size
@@ -231,7 +247,7 @@ class Player(object):
 if __name__ == "__main__":
     test_player1 = Player()
     test_player1.set_main_value('2')
-    suit = '!'
+    suit = 'S'
     for value in ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'J', 'Q', 'K']:
         card = suit + value
         return_card = test_player1.add_card_and_is_snatch(card)
