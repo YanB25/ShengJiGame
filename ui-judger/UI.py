@@ -113,7 +113,7 @@ class Background(object):
 		pygame.display.update()
 
 	def push_cards(self, cards, turn):
-		pygame.time.wait(200)
+		pygame.time.wait(10)
 		role = self.roles[turn]
 		for card in cards:
 			print(role, card)
@@ -139,7 +139,7 @@ class Background(object):
 		pygame.display.update()
 
 	def turn_over(self):
-		pygame.time.wait(500)
+		pygame.time.wait(50)
 		for player in self.players.values():
 			player.del_out_cards()
 		self.blitme()

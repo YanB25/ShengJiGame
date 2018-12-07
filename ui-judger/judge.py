@@ -5,10 +5,10 @@ import pygame
 import os
 import time
 
-import myPlayer as p1
-import player4 as p2
-import myPlayer as p3
-import player4 as p4
+import player1 as p1
+import player1 as p3
+import player2 as p2
+import player2 as p4
 
 import UI
 
@@ -164,18 +164,18 @@ class Judge():
                 return False
             else :
                 return True
-        if a[1] == self.main_num:
-            if b == 'jk' or b=='JK' or b[0]==self.main_color and b[1]==self.covert(self.main_num):
+        if a[1] == self.covert(self.main_num):
+            if b == 'jk' or b=='JK' or (b[0]==self.main_color and b[1]==self.covert(self.main_num)):
                 return False
             else:
                 return True
         if a[0] == self.main_color:
-            if b =='jk' or b=='JK' or b[1]==self.covert(self.main_num) or b[0]==self.main_color and self.is_big(b[1],a[1]):
+            if b =='jk' or b=='JK' or b[1]==self.covert(self.main_num) or (b[0]==self.main_color and self.is_big(b[1],a[1])):
                 return False
             else:
                 return True
         if a[0] == this_color:
-            if b =='jk' or b=='JK' or b[1]==self.covert(self.main_num) or b[0]==self.main_color or b[0]==this_color and self.is_big(b[1],a[1]):
+            if b =='jk' or b=='JK' or b[1]==self.covert(self.main_num) or b[0]==self.main_color or (b[0]==this_color and self.is_big(b[1],a[1])):
                 return False
             else:
                 return True
@@ -202,7 +202,7 @@ class Judge():
                 index = i
                 max_card = cards[i]
         
-        if index % 2 != self.master % 2:
+        if (index + turn) % 2 != self.master % 2:
             self.add_points(cards)
 
         return (turn + index) % 4
@@ -255,7 +255,7 @@ class Judge():
                 #p_cards = self.players[turn].show_cards()
                 p_cards = self.player_cards[turn]
                 #print('a_cards = ', a_cards)   ###############
-                if a_cards[0] == this_color:
+                if a_cards[0] == this_color and a_cards[1] != self.main_num:
                     None
                 elif this_color == self.main_color:
                     if a_cards == 'jk' or a_cards == 'JK' or a_cards[1]==self.covert(self.main_num):
@@ -293,7 +293,7 @@ class Judge():
             self.add_points(self.bottom)
         
         
-        if self.loser % 2 == self.master:
+        if self.loser % 2 == self.master and self.loser != -1:
             self.main_num = self.level[(self.master + 1) % 2]
             self.master = (self.master + 1) % 2
         elif self.loser % 2 != self.master and self.loser != -1:
@@ -332,7 +332,7 @@ if __name__ == '__main__':
 	#judge.level = [12,13]
 	while True:
 		
-		time.sleep(0.5)
+		time.sleep(0.1)
 		judge.new_game(background)
 		judge.run_game(background)
 		background.initial()

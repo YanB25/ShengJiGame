@@ -252,6 +252,8 @@ class Judge():
             for i in range(4):
                 self.players[i].finish_one_round(this_turn_cards, (i + turn ) % 4 )
 
+            print(this_turn_cards)
+
             max_index = self.get_max_index_and_add_points(this_turn_cards, turn, this_color)
             turn = max_index
             self.biggest[max_index] += 1
@@ -284,7 +286,7 @@ class Judge():
         else:
             self.main_num = self.level[(self.master + 1) % 2]
             self.master = (self.master + 1) % 2
-        print(self.biggest)
+        # print(self.biggest)
 
         
 if __name__ == '__main__':
